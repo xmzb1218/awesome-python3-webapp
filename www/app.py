@@ -9,6 +9,7 @@ from aiohttp import web
 from jinja2 import Environment, FileSystemLoader
 
 import orm
+from coroweb import add_routes, add_static
 
 def index(request):
 	return web.Response(body = b'<h1>Awesome</h1>')
@@ -118,6 +119,8 @@ def init(loop):
 	])
 	init_jinja2(app, filters = dict(datetime = datetime_filter))
 	app.router.add_route('GET', '/', index)
+	add_routes(app, 'handlers')
+	add_static(app)
 	srv = yield from loop.create_server(app.make_handler(), '127.0.0.1', 9000)
 	logging.info('server started at http://127.0.0.1:9000 ...')
 	return srv
